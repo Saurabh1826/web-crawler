@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: crawler-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: crawler
+  template:
+    metadata:
+      labels:
+        app: crawler
+    spec:
+      volumes: 
+        - name: shared-data
+          emptyDir: {}
+      terminationGracePeriodSeconds: 120
+      containers:
+      - name: parser-container
+        image: smallela26/parser-image
+        resources: 
+          limits: 
+            memory: 256M
+            cpu: "1"
+          requests: 
+            memory: 256M
+            cpu: "1"
+        volumeMounts: 
+          - name: shared-data
+            mountPath: /shared
+      - name: fetcher-container
+        image: smallela26/fetcher-image
+        resources: 
+          limits: 
+            memory: 256M
+            cpu: "1"
+          requests: 
+            memory: 256M
+            cpu: "1"
+        volumeMounts: 
+          - name: shared-data
+            mountPath: /shared
